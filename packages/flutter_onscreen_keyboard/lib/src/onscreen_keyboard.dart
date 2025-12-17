@@ -1,5 +1,6 @@
 import 'dart:ui' as ui show BoxHeightStyle, BoxWidthStyle;
 
+import 'package:example/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -105,7 +106,7 @@ class OnscreenKeyboard extends StatefulWidget {
   /// See also:
   ///  - [OnscreenKeyboard.new], which creates an [OnscreenKeyboard] widget.
   static TransitionBuilder builder({
-    OnscreenKeyboardThemeData? theme,
+    required ValueKey<KeyboardLanguage> key, OnscreenKeyboardThemeData? theme,
     KeyboardLayout? layout,
     WidthGetter? width,
     bool showControlBar = true,

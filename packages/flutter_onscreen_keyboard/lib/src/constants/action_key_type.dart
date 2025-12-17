@@ -1,4 +1,3 @@
-import 'package:flutter_onscreen_keyboard/src/models/keys.dart';
 
 /// Defines action key type constants used in [ActionKey] widgets.
 ///
@@ -19,4 +18,7 @@ abstract class ActionKeyType {
 
   /// Identifier for the Shift key.
   static const shift = 'shift';
+
+  static const language = 'language';
+
 }

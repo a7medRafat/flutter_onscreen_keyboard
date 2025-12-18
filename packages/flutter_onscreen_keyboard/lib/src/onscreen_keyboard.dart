@@ -120,6 +120,7 @@ class OnscreenKeyboard extends StatefulWidget {
   }) => (BuildContext context, Widget? child) {
     return OnscreenKeyboard(
       theme: theme,
+      key: key,
       layout: layout,
       width: width,
       showControlBar: showControlBar,

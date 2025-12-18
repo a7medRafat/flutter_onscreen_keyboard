@@ -51,7 +51,6 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // use OnscreenKeyboard.builder on MaterialApp.builder
       builder: OnscreenKeyboard.builder(
         key: ValueKey(_currentLanguage),
         width: (context) => MediaQuery.sizeOf(context).width / 2,

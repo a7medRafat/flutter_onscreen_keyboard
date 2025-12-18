@@ -1,10 +1,11 @@
 import 'dart:developer';
+import 'dart:io' show Platform;
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_onscreen_keyboard/flutter_onscreen_keyboard.dart';
-
-enum KeyboardLanguage { english, arabic }
+import 'package:flutter_onscreen_keyboard/keyboard_language.dart';
+import 'package:flutter_onscreen_keyboard/src/constants/action_key_type.dart';
 
 void main() {
   runApp(const App());
@@ -41,32 +42,35 @@ class _AppState extends State<App> {
 
   void _switchLanguage() {
     setState(() {
-      _currentLanguage = switch (_currentLanguage) {
-        KeyboardLanguage.english => KeyboardLanguage.arabic,
-        KeyboardLanguage.arabic => KeyboardLanguage.english,
-      };
+      _currentLanguage = _currentLanguage == KeyboardLanguage.english
+          ? KeyboardLanguage.arabic
+          : KeyboardLanguage.english;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // use OnscreenKeyboard.builder on MaterialApp.builder
       builder: OnscreenKeyboard.builder(
+        key: ValueKey(_currentLanguage),
         width: (context) => MediaQuery.sizeOf(context).width / 2,
         layout: _getLayout(),
       ),
+
       home: HomeScreen(
         currentLanguage: _currentLanguage,
         onLanguageSwitch: _switchLanguage,
         isDesktop: _isDesktop,
       ),
       theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        inputDecorationTheme: const InputDecorationTheme(
-          border: OutlineInputBorder(),
+        inputDecorationTheme: InputDecorationTheme(
+          border: const OutlineInputBorder(),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(width: 2, color: Colors.blue),
+            borderSide: BorderSide(
+              width: 2,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
       ),
@@ -92,6 +96,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final keyboard = OnscreenKeyboard.of(context);
+
   final _formFieldKey = GlobalKey<FormFieldState<String>>();
 
   @override
@@ -108,57 +113,50 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _listener(OnscreenKeyboardKey key) {
-    if (key is TextKey) {
-      log('key: "${key.primary}"');
-    } else if (key is ActionKey) {
-      log('action: ${key.name}');
-
-      // Handle language switch button press
-      if (key.name == 'language') {
-        widget.onLanguageSwitch();
-      }
+    switch (key) {
+      case TextKey(:final primary): // a text key: "a", "b", "4", etc.
+        log('key: "$primary"');
+      case ActionKey(:final name): // a action key: "shift", "backspace", etc.
+        log('action: $name');
+        // Handle language switch
+        if (name == ActionKeyType.language) {
+          widget.onLanguageSwitch();
+        }
     }
   }
 
   String get _languageName {
     return switch (widget.currentLanguage) {
       KeyboardLanguage.english => 'English',
-      KeyboardLanguage.arabic => 'Arabic (العربية)',
+      KeyboardLanguage.arabic => 'Arabic',
     };
   }
 
   String get _languageEmoji {
     return switch (widget.currentLanguage) {
-      KeyboardLanguage.english => '🇬🇧',
-      KeyboardLanguage.arabic => '🇸🇦',
+      KeyboardLanguage.english => 'EN',
+      KeyboardLanguage.arabic => 'AR',
     };
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Multilingual Keyboard Demo'),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
           child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 600),
+            child: SizedBox(
+              width: 300,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 20,
                 children: [
                   const SizedBox(height: 10),
 
-                  // Language indicator card
+                  // Language indicator
                   Card(
-                    elevation: 4,
                     color: Theme.of(context).colorScheme.primaryContainer,
                     child: Padding(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(16.0),
                       child: Column(
                         children: [
                           Row(
@@ -166,9 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Text(
                                 _languageEmoji,
-                                style: const TextStyle(fontSize: 48),
+                                style: const TextStyle(fontSize: 32),
                               ),
-                              const SizedBox(width: 16),
+                              const SizedBox(width: 12),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -185,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     _languageName,
                                     style: Theme.of(context)
                                         .textTheme
-                                        .headlineSmall
+                                        .titleMedium
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: Theme.of(
@@ -197,121 +195,80 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
                           Text(
                             widget.isDesktop
-                                ? 'Desktop Layout (QWERTY)'
+                                ? 'Desktop Layout'
                                 : 'Mobile Layout',
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
-                          const SizedBox(height: 12),
-                          const Divider(),
                           const SizedBox(height: 8),
+                          const Divider(),
+                          const SizedBox(height: 4),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(
                                 Icons.language_rounded,
-                                size: 20,
+                                size: 16,
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 4),
                               Text(
-                                'Click 🌐 on keyboard to switch language',
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                'Click 🌐 on keyboard to switch',
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ],
-                          ),
-                          const SizedBox(height: 12),
-                          ElevatedButton.icon(
-                            onPressed: widget.onLanguageSwitch,
-                            icon: const Icon(Icons.language),
-                            label: Text(
-                              'Switch to ${widget.currentLanguage == KeyboardLanguage.english ? "Arabic" : "English"}',
-                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
 
-                  const SizedBox(height: 20),
-
-                  // Keyboard controls
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton.icon(
-                        onPressed: () => keyboard.open(),
-                        icon: const Icon(Icons.keyboard),
-                        label: const Text('Open Keyboard'),
-                      ),
-                      const SizedBox(width: 12),
-                      OutlinedButton.icon(
-                        onPressed: () => keyboard.close(),
-                        icon: const Icon(Icons.keyboard_hide),
-                        label: const Text('Close Keyboard'),
-                      ),
-                    ],
+                  TextButton(
+                    onPressed: () {
+                      // open the keyboard from anywhere using
+                      OnscreenKeyboard.of(context).open();
+                    },
+                    child: const Text('Open Keyboard'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // close the keyboard from anywhere using
+                      OnscreenKeyboard.of(context).close();
+                    },
+                    child: const Text('Close Keyboard'),
                   ),
 
-                  const SizedBox(height: 24),
-
-                  // Text input examples
-                  const Text(
-                    'Try typing in different languages:',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Single line text field
+                  // TextField that opens the keyboard on focus
                   const OnscreenKeyboardTextField(
+                    // enableOnscreenKeyboard: false,
                     decoration: InputDecoration(
-                      labelText: 'Name / الاسم',
-                      hintText: 'Enter your name',
-                      prefixIcon: Icon(Icons.person),
+                      labelText: 'Name',
                     ),
                   ),
 
-                  const SizedBox(height: 16),
-
-                  // Email field (normal keyboard)
+                  // you can disable the keyboard if you want
                   const OnscreenKeyboardTextField(
                     enableOnscreenKeyboard: false,
                     decoration: InputDecoration(
-                      labelText: 'Email (system keyboard)',
-                      hintText: 'email@example.com',
-                      prefixIcon: Icon(Icons.email),
+                      labelText: 'Email (normal keyboard)',
                     ),
                   ),
 
-                  const SizedBox(height: 16),
-
-                  // Multiline text field
+                  // a multiline TextField
                   const OnscreenKeyboardTextField(
                     decoration: InputDecoration(
-                      labelText: 'Address / العنوان',
-                      hintText: 'Enter your address',
-                      prefixIcon: Icon(Icons.location_on),
-                      alignLabelWithHint: true,
+                      labelText: 'Address',
                     ),
-                    maxLines: 3,
+                    maxLines: null,
                   ),
 
-                  const SizedBox(height: 16),
-
-                  // Form field with validation
+                  // form field
                   OnscreenKeyboardTextFormField(
                     formFieldKey: _formFieldKey,
                     decoration: const InputDecoration(
-                      labelText: 'Message / الرسالة',
-                      hintText: 'Enter a message (required)',
-                      prefixIcon: Icon(Icons.message),
-                      alignLabelWithHint: true,
+                      labelText: 'Note',
                     ),
-                    maxLines: 4,
                     onChanged: (value) {
                       _formFieldKey.currentState?.validate();
                     },
@@ -319,58 +276,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter some text';
                       }
-                      if (value.length < 3) {
-                        return 'Message must be at least 3 characters';
-                      }
                       return null;
                     },
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Info card
-                  Card(
-                    color: Colors.blue.shade50,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.info_outline,
-                                color: Colors.blue.shade700,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Tips:',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue.shade700,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            '• Tap on any text field to open the keyboard',
-                          ),
-                          const Text(
-                            '• Press 🌐 button to switch between English and Arabic',
-                          ),
-                          const Text(
-                            '• Press 123/أبج to switch to symbols mode',
-                          ),
-                          const Text(
-                            '• Use Shift for capital letters (English)',
-                          ),
-                          const Text(
-                            '• Keyboard automatically adapts to mobile/desktop',
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                 ],
               ),

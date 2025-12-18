@@ -1,0 +1,1 @@
+enum KeyboardLanguage { english, arabic }

@@ -1,6 +1,5 @@
 import 'dart:ui' as ui show BoxHeightStyle, BoxWidthStyle;
 
-import 'package:example/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -106,7 +105,7 @@ class OnscreenKeyboard extends StatefulWidget {
   /// See also:
   ///  - [OnscreenKeyboard.new], which creates an [OnscreenKeyboard] widget.
   static TransitionBuilder builder({
-    required ValueKey<KeyboardLanguage> key, OnscreenKeyboardThemeData? theme,
+    OnscreenKeyboardThemeData? theme,
     KeyboardLayout? layout,
     WidthGetter? width,
     bool showControlBar = true,
@@ -131,8 +130,8 @@ class OnscreenKeyboard extends StatefulWidget {
     final provider = context
         .getInheritedWidgetOfExactType<_OnscreenKeyboardProvider>();
     assert(
-      provider != null,
-      '''
+    provider != null,
+    '''
 No OnscreenKeyboard found in context. Did you wrap your app with OnscreenKeyboard?
 
     MaterialApp(
@@ -181,7 +180,7 @@ class _OnscreenKeyboardState extends State<OnscreenKeyboard>
 
   void _handleTexTextKeyDown(TextKey key) {
     if (activeTextField?.controller case final controller?
-        when controller.selection.isValid) {
+    when controller.selection.isValid) {
       final keyText = key.getText(secondary: _showSecondary);
       final currentText = controller.text;
       final selection = controller.selection;
@@ -230,7 +229,7 @@ class _OnscreenKeyboardState extends State<OnscreenKeyboard>
     }
 
     if (activeTextField?.controller case final controller?
-        when controller.selection.isValid) {
+    when controller.selection.isValid) {
       final originalText = controller.text;
 
       switch (key.name) {
@@ -426,8 +425,8 @@ class _OnscreenKeyboardState extends State<OnscreenKeyboard>
   @override
   Widget build(BuildContext context) {
     assert(
-      _layout.modes.isNotEmpty,
-      'Keyboard layout must have at least one mode defined.',
+    _layout.modes.isNotEmpty,
+    'Keyboard layout must have at least one mode defined.',
     );
 
     return _OnscreenKeyboardProvider(
@@ -458,27 +457,27 @@ class _OnscreenKeyboardState extends State<OnscreenKeyboard>
                                 // drag handle keyboard widget
                                 final dragHandle = GestureDetector(
                                   onPanStart: (_) =>
-                                      _draggingListener.value = true,
+                                  _draggingListener.value = true,
                                   onPanCancel: () =>
-                                      _draggingListener.value = false,
+                                  _draggingListener.value = false,
                                   onPanDown: (_) =>
-                                      _draggingListener.value = true,
+                                  _draggingListener.value = true,
                                   onPanEnd: (_) =>
-                                      _draggingListener.value = false,
+                                  _draggingListener.value = false,
                                   onPanUpdate: (details) {
                                     final keyboardSize =
-                                        _keyboardKey.currentContext!.size!;
+                                    _keyboardKey.currentContext!.size!;
                                     _alignListener.value = (
-                                      (_alignListener.value.$1 +
-                                              details.delta.dx /
-                                                  (context.size!.width -
-                                                      keyboardSize.width))
-                                          .clamp(0.0, 1.0),
-                                      (_alignListener.value.$2 +
-                                              details.delta.dy /
-                                                  (context.size!.height -
-                                                      keyboardSize.height))
-                                          .clamp(0.0, 1.0),
+                                    (_alignListener.value.$1 +
+                                        details.delta.dx /
+                                            (context.size!.width -
+                                                keyboardSize.width))
+                                        .clamp(0.0, 1.0),
+                                    (_alignListener.value.$2 +
+                                        details.delta.dy /
+                                            (context.size!.height -
+                                                keyboardSize.height))
+                                        .clamp(0.0, 1.0),
                                     );
                                   },
                                   child: ValueListenableBuilder(
@@ -508,9 +507,9 @@ class _OnscreenKeyboardState extends State<OnscreenKeyboard>
                                   // theme override for modes
                                   child: OnscreenKeyboardTheme(
                                     data:
-                                        _layout.modes[_mode]!.theme?.call(
-                                          context,
-                                        ) ??
+                                    _layout.modes[_mode]!.theme?.call(
+                                      context,
+                                    ) ??
                                         context.theme,
                                     child: Builder(
                                       key: _keyboardKey,
@@ -521,7 +520,7 @@ class _OnscreenKeyboardState extends State<OnscreenKeyboard>
                                         final theme = context.theme;
                                         final borderRadius =
                                             theme.borderRadius ??
-                                            BorderRadius.circular(6);
+                                                BorderRadius.circular(6);
                                         return Material(
                                           type: MaterialType.transparency,
                                           child: Container(
@@ -534,7 +533,7 @@ class _OnscreenKeyboardState extends State<OnscreenKeyboard>
                                               borderRadius: borderRadius,
                                               gradient: theme.gradient,
                                               boxShadow:
-                                                  theme.boxShadow ??
+                                              theme.boxShadow ??
                                                   [
                                                     BoxShadow(
                                                       color: colors.shadow.fade(
@@ -548,7 +547,7 @@ class _OnscreenKeyboardState extends State<OnscreenKeyboard>
                                             foregroundDecoration: BoxDecoration(
                                               borderRadius: borderRadius,
                                               border:
-                                                  theme.border ??
+                                              theme.border ??
                                                   Border.all(
                                                     color: colors.outline
                                                         .fade(),
@@ -566,13 +565,13 @@ class _OnscreenKeyboardState extends State<OnscreenKeyboard>
                                                   ),
                                                 RawOnscreenKeyboard(
                                                   aspectRatio:
-                                                      widget.aspectRatio,
+                                                  widget.aspectRatio,
                                                   onKeyDown: _onKeyDown,
                                                   onKeyUp: _onKeyUp,
                                                   layout: _layout,
                                                   mode: _mode,
                                                   pressedActionKeys:
-                                                      _pressedActionKeys,
+                                                  _pressedActionKeys,
                                                   showSecondary: _showSecondary,
                                                 ),
                                               ],

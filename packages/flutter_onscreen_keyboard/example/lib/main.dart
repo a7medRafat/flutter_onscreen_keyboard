@@ -3,14 +3,12 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_onscreen_keyboard/flutter_onscreen_keyboard.dart';
-import 'package:flutter_onscreen_keyboard/flutter_onscreen_keyboard.dart';
 
+enum KeyboardLanguage { english, arabic }
 
 void main() {
   runApp(const App());
 }
-
-enum KeyboardLanguage { english, arabic }
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -22,8 +20,6 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   KeyboardLanguage _currentLanguage = KeyboardLanguage.english;
 
-  final _keyboardKey = GlobalKey();
-  
   bool get _isDesktop {
     if (kIsWeb) return false;
     return Platform.isMacOS || Platform.isWindows || Platform.isLinux;
@@ -55,7 +51,6 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      key: _keyboardKey,
       builder: OnscreenKeyboard.builder(
         width: (context) => MediaQuery.sizeOf(context).width / 2,
         layout: _getLayout(),
@@ -163,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     elevation: 4,
                     color: Theme.of(context).colorScheme.primaryContainer,
                     child: Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(20),
                       child: Column(
                         children: [
                           Row(
@@ -179,14 +174,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   Text(
                                     'Current Language',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
+                                    style: Theme.of(context).textTheme.bodySmall
                                         ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimaryContainer,
-                                    ),
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimaryContainer,
+                                        ),
                                   ),
                                   Text(
                                     _languageName,
@@ -194,11 +187,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .textTheme
                                         .headlineSmall
                                         ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimaryContainer,
-                                    ),
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimaryContainer,
+                                        ),
                                   ),
                                 ],
                               ),
@@ -360,11 +353,21 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          const Text('• Tap on any text field to open the keyboard'),
-                          const Text('• Press 🌐 button to switch between English and Arabic'),
-                          const Text('• Press 123/أبج to switch to symbols mode'),
-                          const Text('• Use Shift for capital letters (English)'),
-                          const Text('• Keyboard automatically adapts to mobile/desktop'),
+                          const Text(
+                            '• Tap on any text field to open the keyboard',
+                          ),
+                          const Text(
+                            '• Press 🌐 button to switch between English and Arabic',
+                          ),
+                          const Text(
+                            '• Press 123/أبج to switch to symbols mode',
+                          ),
+                          const Text(
+                            '• Use Shift for capital letters (English)',
+                          ),
+                          const Text(
+                            '• Keyboard automatically adapts to mobile/desktop',
+                          ),
                         ],
                       ),
                     ),

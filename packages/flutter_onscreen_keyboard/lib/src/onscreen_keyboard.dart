@@ -109,7 +109,7 @@ class OnscreenKeyboard extends StatefulWidget {
   /// See also:
   ///  - [OnscreenKeyboard.new], which creates an [OnscreenKeyboard] widget.
   static TransitionBuilder builder({
-    required ValueKey<KeyboardLanguage> key,
+    ValueKey<KeyboardLanguage>? key,
     OnscreenKeyboardThemeData? theme,
     KeyboardLayout? layout,
     WidthGetter? width,
